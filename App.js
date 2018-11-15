@@ -1,62 +1,29 @@
 import React, { Component } from 'react';
-import { Platform, Text, View, StyleSheet } from 'react-native';
-import { Constants, Location, Permissions } from 'expo';
+import { Spinner } from 'native-base';
+import LoginScreen from './src/screens/login/LoginScreen';
 
 export default class App extends Component {
-  state = {
-    location: null,
-    errorMessage: null,
-  };
 
-  componentWillMount() {
-    if (Platform.OS === 'android' && !Constants.isDevice) {
-      this.setState({
-        errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
-      });
-    } else {
-      this._getLocationAsync();
+  constructor(props){
+    super(props);
+    this.state = {
+      loading:true,
     }
   }
-
-  _getLocationAsync = async () => {
-    let { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status !== 'granted') {
-      this.setState({
-        errorMessage: 'Premissão para acessar a localização foi negada.',
-      });
-    }
-
-    let location = await Location.getCurrentPositionAsync({});
-    this.setState({ location });
-  };
-
+  async componentWillMount() {
+    await Expo.Font.loadAsync({
+      'Roboto': require('native-base/Fonts/Roboto.ttf'),
+      'Roboto_medium': require('native-base/Fonts/Roboto_medium.ttf'),
+    })
+    .then(this.setState({loading:false}));
+  }
+  
   render() {
-    let text = 'Aguarde...';
-    if (this.state.errorMessage) {
-      text = this.state.errorMessage;
-    } else if (this.state.location) {
-      text = JSON.stringify(this.state.location);
+    
+    if(this.state.loading){
+      return <Spinner/>
+    }else{
+      return <LoginScreen/>
     }
-
-    return (
-      <View style={styles.container}>
-        <Text style={styles.paragraph}>{text}</Text>
-      </View>
-    );
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingTop: Constants.statusBarHeight,
-    backgroundColor: '#ecf0f1',
-  },
-  paragraph: {
-    margin: 24,
-    fontSize: 18,
-    textAlign: 'center',
-  },
-});
