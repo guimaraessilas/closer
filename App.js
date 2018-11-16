@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import LoginScreen from './src/screens/login/LoginScreen';
+import HomeScreen from './src/screens/home/HomeScreen';
 
 export default class App extends Component {
 
@@ -7,6 +8,7 @@ export default class App extends Component {
     super(props);
     this.state = {
       loading:true,
+      logged:true,
     }
   }
   
@@ -25,7 +27,12 @@ export default class App extends Component {
     if(this.state.loading){
       return <Expo.AppLoading/>
     }else{
-      return <LoginScreen/>
+      
+      if(this.state.logged){
+        return <HomeScreen/>
+      }else{
+        return <LoginScreen/>;
+      }
     }
   }
 }
