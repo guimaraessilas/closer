@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
 import TabFriends from '../tabs/TabFriends';
 import TabMap from '../tabs/TabMap';
-import { Container, Tabs, Tab, TabHeading, Icon, Header, Body, Title, Button, Right, Left, Badge, Text, Item, Input, FooterTab, Footer, Content } from 'native-base';
+import { Container, Icon, Button, FooterTab, Footer, Content, StyleProvider, Text } from 'native-base';
+import TabProfile from '../tabs/TapProfile';
+
+import getTheme from '../../../native-base-theme/components';
+import platform from '../../../native-base-theme/variables/platform';
 
 export default class HomeScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
             loading: true,
-            tab: <TabFriends/>,
-            tabFriendsActive: true,
-            tabMapActive: false
+            tab: <TabProfile />,
+            scroll: false,
         }
     }
 
@@ -26,32 +29,33 @@ export default class HomeScreen extends Component {
 
     render() {
         return (
-            <Container>
-                <Header searchBar rounded style={{ paddingTop: 60, paddingBottom: 30 }}>
-                    <Item>
-                        <Icon name="search" />
-                        <Input placeholder="Search " />
-                        <Right>
-                            <Button>
-                                <Icon name="md-more" />
+            <StyleProvider style={getTheme(platform)}>
+                <Container>
+                    <Content scrollEnabled={this.state.scroll}>
+                        {this.state.tab}
+                    </Content>
+
+                    <Footer>
+                        <FooterTab>
+                            <Button onPress={() => { this.setState({ tab: <TabProfile />, scroll: false }); }}>
+                                <Icon name="person" style={{ color: '#fff' }}/>
                             </Button>
-                        </Right>
-                    </Item>
-                </Header>
-                <Content>
-                    {this.state.tab}
-                </Content>
-                <Footer>
-                    <FooterTab>
-                        <Button active={this.state.tabFriendsActive} onPress={() => {this.setState({tab: <TabFriends/>, tabFriendsActive: true, tabMapActive: false});}}>
-                            <Icon name="person"/>
-                        </Button>
-                        <Button active={this.state.tabMapActive} onPress={() => {this.setState({tab: <TabMap/>, tabMapActive: true, tabFriendsActive: false});}}>
-                            <Icon name="map"/>
-                        </Button>
-                    </FooterTab>
-                </Footer>
-            </Container>
+                            <Button onPress={() => { this.setState({ tab: <TabFriends />, scroll: true }); }}>
+                                <Icon name="people" style={{ color: '#fff' }}/>
+                            </Button>
+                            <Button onPress={() => { this.setState({ tab: <TabMap /> }); }}>
+                                <Icon name="map" style={{ color: '#fff' }}/>
+                            </Button>
+                            <Button onPress={() => { this.setState({ tab: <TabMap /> }); }}>
+                                <Icon name="search" style={{ color: '#fff' }}/>
+                            </Button>
+                            <Button onPress={() => { this.setState({ tab: <TabMap /> }); }}>
+                                <Icon name="options" style={{ color: '#fff' }} />
+                            </Button>
+                        </FooterTab>
+                    </Footer>
+                </Container>
+            </StyleProvider>
         );
     }
 }
