@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
-import TabFriends from '../tabs/TabFriends';
-import TabMap from '../tabs/TabMap';
 import { Container, Icon, Button, FooterTab, Footer, Content, StyleProvider, Text } from 'native-base';
-import TabProfile from '../tabs/TapProfile';
+
+import Profile from '../profile/Profile';
+import FriendList from '../friendsList/FriendList';
+import Map from '../map/Map';
+import Search from '../search/Search';
+
 
 import getTheme from '../../../native-base-theme/components';
 import platform from '../../../native-base-theme/variables/platform';
@@ -12,7 +15,7 @@ export default class HomeScreen extends Component {
         super(props);
         this.state = {
             loading: true,
-            tab: <TabProfile />,
+            tab: <FriendList />,
             scroll: false,
         }
     }
@@ -31,27 +34,27 @@ export default class HomeScreen extends Component {
         return (
             <StyleProvider style={getTheme(platform)}>
                 <Container>
-                    <Content scrollEnabled={this.state.scroll}>
+                    <Content scrollEnabled={false}>
                         {this.state.tab}
                     </Content>
 
                     <Footer>
                         <FooterTab>
-                            <Button onPress={() => { this.setState({ tab: <TabProfile />, scroll: false }); }}>
+                            <Button onPress={() => { this.setState({ tab: <Profile/>}); }}>
                                 <Icon name="person" style={{ color: '#fff' }}/>
                             </Button>
-                            <Button onPress={() => { this.setState({ tab: <TabFriends />, scroll: true }); }}>
+                            <Button onPress={() => { this.setState({ tab: <FriendList/>}); }}>
                                 <Icon name="people" style={{ color: '#fff' }}/>
                             </Button>
-                            <Button onPress={() => { this.setState({ tab: <TabMap /> }); }}>
+                            <Button onPress={() => { this.setState({ tab: <Map/>}); }}>
                                 <Icon name="map" style={{ color: '#fff' }}/>
                             </Button>
-                            <Button onPress={() => { this.setState({ tab: <TabMap /> }); }}>
+                            <Button onPress={() => { this.setState({ tab: <Search/>}); }}>
                                 <Icon name="search" style={{ color: '#fff' }}/>
                             </Button>
-                            <Button onPress={() => { this.setState({ tab: <TabMap /> }); }}>
+                            {/* <Button onPress={() => { this.setState({ tab: <TabMap /> }); }}> 
                                 <Icon name="options" style={{ color: '#fff' }} />
-                            </Button>
+                            </Button>*/}
                         </FooterTab>
                     </Footer>
                 </Container>

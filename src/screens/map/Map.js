@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Platform, Text, View, StyleSheet } from 'react-native';
 import { Constants, Location, Permissions } from 'expo';
 
-export default class Localizacao extends Component {
+export default class Map extends Component {
   state = {
     location: null,
     errorMessage: null,

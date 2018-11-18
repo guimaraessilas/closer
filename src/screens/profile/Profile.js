@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Header, Right, Button, Icon, Body, Title, Container, Content, View, Thumbnail, Text } from "native-base";
 
-export default class TabProfile extends Component {
+export default class Profile extends Component {
     render() {
         return (
             <Container>
@@ -13,7 +13,7 @@ export default class TabProfile extends Component {
                 <View >
                     <View style={{ backgroundColor: '#06864E', height: 100, width: null }} />
                     <View style={{ backgroundColor: '#fff', borderColor: '#8492A6', borderRadius: 20, borderWidth: 1, width: 300, height: 300, alignSelf: 'center', position: 'absolute', marginTop: 40 }}>
-                        <Text style={{ fontSize: 22, alignSelf: 'center', marginTop: 45, color: '#5A6978' }}>Silas Guimarães Ribeiro</Text>
+                        <Text style={{ fontSize: 22, alignSelf: 'center', marginTop: 60, color: '#5A6978' }}>Silas Guimarães Ribeiro</Text>
     
                         <Text style={{ fontSize: 14, alignSelf: 'center', marginTop: 10, color: '#8492A6' }}>CTO at Marvel Prototyping</Text>
     
@@ -21,7 +21,7 @@ export default class TabProfile extends Component {
 
                         <Text style={{ fontSize: 14, alignSelf: 'center', marginTop: 10, color: '#8492A6'}}>Atualmente em Londres, Reino Unido</Text>
                     </View>
-                    <Thumbnail large style={{ alignSelf: 'center', position: 'absolute' }} source={require('../../../assets/user.jpeg')} />
+                    <Thumbnail style={{ alignSelf: 'center', position: 'absolute', width: 100, height: 100, borderRadius: 50 }} source={require('../../../assets/user.jpeg')} />
                 </View>
 
 
