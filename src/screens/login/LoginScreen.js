@@ -1,12 +1,20 @@
 import React, { Component } from 'react';
 import { Text, Button, Icon, View, Form, Label, Item, Input } from 'native-base';
 import { StyleSheet, ImageBackground } from 'react-native';
+import SpinnerButton from 'react-native-spinner-button';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default class LoginScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
             loading: true,
+            login: '',
+            password: '',
+            result: false,
+            msg: '',
+            user: null,
+            buttonLoading: false
         }
     }
 
@@ -17,39 +25,84 @@ export default class LoginScreen extends Component {
             Ionicons: require("@expo/vector-icons/fonts/Ionicons.ttf"),
         });
         this.setState({ loading: false });
+    }
 
+    login = async () => {
+        this.setState({ buttonLoading: true });
+        try {
+            console.log('login')
+            fetch('http://192.168.43.46:8080/closer/api/service/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: this.state.email,
+                    password: this.state.password
+                })
+            })
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    console.log(responseJson);
+                    if (responseJson.result) {
+                        this.setState({ user: responseJson.json[0] });
+                        this.props.navigation.navigate('home', { user: this.state.user });
+                    } else {
+                        this.setState({ msg: responseJson.message });
+                    }
+                })
+        } catch (error) {
+            this.setState({ msg: 'Error na conexão' });
+        }
+        this.setState({ buttonLoading: false });
     }
 
     render() {
-
         if (this.state.loading) {
             return <Expo.AppLoading />
         } else {
             return (
                 <ImageBackground source={require('../../../assets/login-background.jpg')} style={styles.backgroundImage} >
 
-                    <Button transparent style={{ marginTop: 30, marginLeft: 5 }} onPress={() => { this.props.navigation.navigate('signup');}}>
+                    <Button transparent style={{ marginTop: 30, marginLeft: 5 }} onPress={() => { this.props.navigation.navigate('signup'); }}>
                         <Icon name="add" style={{ color: '#fff', fontWeight: 'bold' }} />
                         <Text style={styles.textStyle}>Criar uma conta</Text>
                     </Button>
-
+                    <KeyboardAwareScrollView
+                        keyboardShouldPersistTaps="handled"
+                        resetScrollToCoords={{ x: 0, y: 0 }}
+                        keyboardOpeningTime={0}
+                        scrollEnabled={true}
+                        enableOnAndroid={true}
+                        enableAutomaticScroll={true}
+                    >
                     <View style={styles.container}>
-                        <Form>
+                        <Form   >
+                            <Text style={{ color: 'orange', fontSize: 16, textAlign: 'center' }}>
+                                {this.state.msg}
+                            </Text>
+
                             <Item floatingLabel style={{ marginRight: 15 }}>
                                 <Label style={styles.textStyle}>Username or Email</Label>
-                                <Input style={styles.textStyle}/>
-                                <Icon name="mail" style={{color: '#fff'}}/>
+                                <Input style={styles.textStyle} keyboardType={'email-address'} selectTextOnFocus={true} returnKeyType={'next'} onChangeText={email => { this.setState({ email }) }} />
+                                <Icon name="mail" style={{ color: '#fff' }} />
                             </Item>
                             <Item floatingLabel style={{ marginRight: 15 }}>
                                 <Label style={styles.textStyle}>Password</Label>
-                                <Input style={styles.textStyle}/>
-                                <Icon name="lock" style={{color: '#fff'}}/>
+                                <Input style={styles.textStyle} secureTextEntry selectTextOnFocus={true} returnKeyType={'done'} onChangeText={password => { this.setState({ password }) }} />
+                                <Icon name="lock" style={{ color: '#fff' }} />
                             </Item>
                         </Form>
-                        <Button full style={{ marginTop: 10, marginLeft: 15, marginRight: 15, backgroundColor: '#066039' }} onPress={() => { this.props.navigation.navigate('home') }}>
-                            <Text> Entrar </Text>
-                        </Button>
+                        <SpinnerButton
+                            buttonStyle={{ marginTop: 15, marginLeft: 15, marginRight: 15, backgroundColor: '#066039' }}
+                            isLoading={this.state.buttonLoading}
+                            spinnerType='PacmanIndicator'
+                            onPress={this.login.bind(this)}
+                        >
+                            <Text style={styles.textStyle}>Entrar</Text>
+                        </SpinnerButton>
                     </View>
+                    </KeyboardAwareScrollView>
                 </ImageBackground >
             );
         }
@@ -59,11 +112,11 @@ export default class LoginScreen extends Component {
 const styles = StyleSheet.create({
     backgroundImage: {
         backgroundColor: '#00000022',
-        flex: 1,
+        flex: 1
     },
     textStyle: {
         color: '#fff',
-        fontSize: 16,
+        fontSize: 16
     },
     container: {
         justifyContent: 'center',
@@ -72,8 +125,6 @@ const styles = StyleSheet.create({
         paddingLeft: 5,
         paddingRight: 5,
         paddingBottom: 100,
-        backgroundColor: '#000000AA',
-
+        backgroundColor: '#000000AA'
     },
-
 });

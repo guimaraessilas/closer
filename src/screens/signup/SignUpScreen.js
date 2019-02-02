@@ -1,19 +1,26 @@
 import React, { Component } from 'react';
 import { Text, Button, Icon, View, Form, Label, Item, Input, DatePicker } from 'native-base';
 import { StyleSheet, ImageBackground } from 'react-native';
+import SpinnerButton from 'react-native-spinner-button';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default class SignUpScreen extends Component {
     constructor(props) {
         super(props);
         this.state = {
             loading: true,
-            dataNascimento: new Date()
+            result: false,
+            msg: '',
+            user: null,
+            buttonLoading: false,
+            username: '',
+            fullname: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            phone: '',
+            formOk: false
         }
-        this.setDate = this.setDate.bind(this);
-    }
-
-    setDate(newDate) {
-        this.setState({ dataNascimento: newDate })
     }
 
     async componentWillMount() {
@@ -23,7 +30,51 @@ export default class SignUpScreen extends Component {
             Ionicons: require("@expo/vector-icons/fonts/Ionicons.ttf"),
         });
         this.setState({ loading: false });
+    }
 
+    signup = async () => {
+        this.setState({ buttonLoading: true });
+        if (!this.state.email) {
+            this.setState({ msg: 'Precisamos do seu email para te identificarmos e te ajudar caso você se esqueça sua senha!', formOk: false })
+        } else if (!this.state.username) {
+            this.setState({ msg: 'Seu nome de usuário é a principal forma como seus amigos podem te encontrar aqui!', formOk: false })
+        } else if (!this.state.password) {
+            this.setState({ msg: 'Sem a sua senha não vamos conseguir impedir que alguém além de você acesse seu perfil!', formOk: false })
+        } else if (this.state.password === this.state.confirmPassword) {
+            this.setState({ msg: 'As Senhas não correspondem', formOk: false });
+        }
+        if (this.state.formOk) {
+            try {
+                console.log('signup')
+                fetch('http://192.168.43.46:8080/closer/api/service/signup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: this.state.email,
+                        password: this.state.password,
+                        username: this.state.username,
+                        fullname: this.state.fullname,
+                        phone: this.state.phone
+                    })
+                })
+                    .then((response) => response.json())
+                    .then((responseJson) => {
+                        console.log(responseJson);
+                        if (responseJson.result) {
+                            this.setState({ user: responseJson.json[0] });
+                            this.props.navigation.navigate('home', { user: this.state.user });
+                        } else {
+                            this.setState({ msg: responseJson.message });
+                        }
+                    })
+            } catch (error) {
+                this.setState({ msg: 'Error na conexão' });
+            }
+        }
+
+        this.setState({ buttonLoading: false });
     }
 
     render() {
@@ -38,37 +89,77 @@ export default class SignUpScreen extends Component {
                         <Icon name="arrow-back" style={{ color: '#fff', fontWeight: 'bold' }} />
                         <Text style={styles.textStyle}>CADASTRO</Text>
                     </Button>
+                    <KeyboardAwareScrollView
+                        keyboardShouldPersistTaps="handled"
+                        resetScrollToCoords={{ x: 0, y: 0 }}
+                        keyboardOpeningTime={0}
+                        scrollEnabled={true}
+                        enableOnAndroid={true}
+                        enableAutomaticScroll={true}
+                    >
 
-                    <View style={styles.container}>
-                        <Form>
-                            <Item floatingLabel style={{ marginRight: 15 }}>
-                                <Label style={styles.textStyle}>Email</Label>
-                                <Input keyboardType={"email-address"} style={styles.textStyle} />
-                                <Icon name="mail" style={{ color: '#fff' }} />
-                            </Item>
+                        <View style={styles.container}>
+                            <Form>
+                                <Text style={{ color: 'orange', fontSize: 16, textAlign: 'center' }}>
+                                    {this.state.msg}
+                                </Text>
+                                <Item floatingLabel style={{ marginRight: 15 }}>
+                                    <Label style={styles.textStyle}>Email</Label>
+                                    <Input style={styles.textStyle} keyboardType={'email-address'}
+                                        selectTextOnFocus={true} returnKeyType={'next'}
+                                        onChangeText={email => { this.setState({ email }) }}
+                                    />
+                                    <Icon name="mail" style={{ color: '#fff' }} />
+                                </Item>
 
-                            <Item floatingLabel style={{ marginRight: 15 }}>
-                                <Label style={styles.textStyle}>Nome de Usuário</Label>
-                                <Input style={styles.textStyle} />
-                                <Icon name="person" style={{ color: '#fff' }} />
-                            </Item>
+                                <Item floatingLabel style={{ marginRight: 15 }}>
+                                    <Label style={styles.textStyle}>Nome Completo</Label>
+                                    <Input style={styles.textStyle} selectTextOnFocus={true}
+                                        returnKeyType={'next'}
+                                        onChangeText={fullname => { this.setState({ fullname }) }}
+                                    />
+                                    <Icon name="person" style={{ color: '#fff' }} />
+                                </Item>
 
-                            <Item floatingLabel style={{ marginRight: 15 }}>
-                                <Label style={styles.textStyle}>Data de Nascimento</Label>
-                                <Input keyboardType={"numeric"} maxLength={10} style={styles.textStyle}/>
-                                <Icon name="calendar" style={{ color: '#fff' }} />
-                            </Item>
+                                <Item floatingLabel style={{ marginRight: 15 }}>
+                                    <Label style={styles.textStyle}>Nome de usuario</Label>
+                                    <Input style={styles.textStyle} selectTextOnFocus={true}
+                                        returnKeyType={'next'}
+                                        onChangeText={username => { this.setState({ username }) }}
+                                    />
+                                    <Icon name="person" style={{ color: '#fff' }} />
+                                </Item>
 
-                            <Item floatingLabel style={{ marginRight: 15 }}>
-                                <Label style={styles.textStyle}>Password</Label>
-                                <Input style={styles.textStyle} />
-                                <Icon name="lock" style={{ color: '#fff' }} />
-                            </Item>
-                        </Form>
-                        <Button full style={{ marginTop: 10, marginLeft: 15, marginRight: 15, backgroundColor: '#066039' }} onPress={() => { this.props.navigation.navigate('home') }}>
-                            <Text> Cadastrar </Text>
-                        </Button>
-                    </View>
+                                <Item floatingLabel style={{ marginRight: 15 }}>
+                                    <Label style={styles.textStyle}>Senha</Label>
+                                    <Input style={styles.textStyle} secureTextEntry
+                                        selectTextOnFocus={true} returnKeyType={'next'}
+                                        onChangeText={password => { this.setState({ password }) }}
+                                    />
+                                    <Icon name="lock" style={{ color: '#fff' }} />
+                                </Item>
+
+                                <Item floatingLabel style={{ marginRight: 15 }}>
+                                    <Label style={styles.textStyle}>Confirmar Senha</Label>
+                                    <Input style={styles.textStyle} secureTextEntry
+                                        selectTextOnFocus={true} returnKeyType={'done'}
+                                        onChangeText={confirmPassword => { this.setState({ confirmPassword }) }}
+                                    />
+                                    <Icon name="lock" style={{ color: '#fff' }} />
+                                </Item>
+
+                            </Form>
+                            <SpinnerButton
+                                buttonStyle={{ marginTop: 15, marginLeft: 15, marginRight: 15, backgroundColor: '#066039' }}
+                                isLoading={this.state.buttonLoading}
+                                spinnerType='PacmanIndicator'
+                                onPress={this.signup.bind(this)}
+                            >
+                                <Text style={styles.textStyle}>Entrar</Text>
+                            </SpinnerButton>
+                        </View>
+                    </KeyboardAwareScrollView>
+
                 </ImageBackground >
             );
         }
