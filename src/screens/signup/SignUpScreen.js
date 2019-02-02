@@ -44,34 +44,33 @@ export default class SignUpScreen extends Component {
             this.setState({ msg: 'As Senhas não correspondem', formOk: false });
         }
         if (this.state.formOk) {
-            try {
-                console.log('signup')
-                fetch('http://192.168.43.46:8080/closer/api/service/signup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email: this.state.email,
-                        password: this.state.password,
-                        username: this.state.username,
-                        fullname: this.state.fullname,
-                        phone: this.state.phone
-                    })
+            console.log('signup')
+            fetch('http://192.168.43.46:8080/closer/api/service/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    email: this.state.email,
+                    password: this.state.password,
+                    username: this.state.username,
+                    fullname: this.state.fullname,
+                    phone: this.state.phone
                 })
-                    .then((response) => response.json())
-                    .then((responseJson) => {
-                        console.log(responseJson);
-                        if (responseJson.result) {
-                            this.setState({ user: responseJson.json[0] });
-                            this.props.navigation.navigate('home', { user: this.state.user });
-                        } else {
-                            this.setState({ msg: responseJson.message });
-                        }
-                    })
-            } catch (error) {
-                this.setState({ msg: 'Error na conexão' });
-            }
+            })
+                .then((response) => response.json())
+                .then((responseJson) => {
+                    console.log(responseJson);
+                    if (responseJson.result) {
+                        this.setState({ user: responseJson.json[0] });
+                        this.props.navigation.navigate('home', { user: this.state.user });
+                    } else {
+                        this.setState({ msg: responseJson.message });
+                    }
+                }).catch((error) => {
+                    this.setState({ msg: 'Error na conexão' });
+                })
+
         }
 
         this.setState({ buttonLoading: false });

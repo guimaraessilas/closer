@@ -7,6 +7,9 @@ export default class ListFriendsItem extends Component {
         this.state = {
             loading: true,
         }
+        console.log("Props")
+        console.log(this.props.data.fullname)
+        console.log(this.props.data.username)
     }
 
     async componentWillMount() {
@@ -16,7 +19,6 @@ export default class ListFriendsItem extends Component {
             Ionicons: require("@expo/vector-icons/fonts/Ionicons.ttf"),
         });
         this.setState({ loading: false });
-
     }
 
     render() {
@@ -24,8 +26,8 @@ export default class ListFriendsItem extends Component {
             <ListItem avatar>
                 <Left><Thumbnail source={require('../../assets/user.jpeg')} /></Left>
                 <Body>
-                    <Text>{this.props.name}</Text>
-                    <Text note>{this.props.distance}</Text>
+                    <Text>{this.props.data.fullname}</Text>
+                    <Text note>{this.props.data.username}</Text>
                 </Body>
                 
             </ListItem>

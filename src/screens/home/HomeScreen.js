@@ -5,8 +5,6 @@ import Profile from '../profile/Profile';
 import FriendList from '../friendsList/FriendList';
 import Map from '../map/Map';
 import Search from '../search/Search';
-
-
 import getTheme from '../../../native-base-theme/components';
 import platform from '../../../native-base-theme/variables/platform';
 
@@ -15,8 +13,9 @@ export default class HomeScreen extends Component {
         super(props);
         this.state = {
             loading: true,
-            tab: <FriendList />,
             scroll: false,
+            user: this.props.navigation.state.params.user,
+            tab: null
         }
     }
 
@@ -26,7 +25,7 @@ export default class HomeScreen extends Component {
             Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
             Ionicons: require("@expo/vector-icons/fonts/Ionicons.ttf"),
         });
-        this.setState({ loading: false });
+        this.setState({ loading: false, tab: <Profile user={this.props.navigation.state.params.user}/> });
 
     }
 
@@ -40,10 +39,10 @@ export default class HomeScreen extends Component {
 
                     <Footer>
                         <FooterTab>
-                            <Button onPress={() => { this.setState({ tab: <Profile/>}); }}>
+                            <Button onPress={() => { this.setState({ tab: <Profile user={this.state.user}/>}); }}>
                                 <Icon name="person" style={{ color: '#fff' }}/>
                             </Button>
-                            <Button onPress={() => { this.setState({ tab: <FriendList/>}); }}>
+                            <Button onPress={() => { this.setState({ tab: <FriendList id={this.state.user.id}/>}); }}>
                                 <Icon name="people" style={{ color: '#fff' }}/>
                             </Button>
                             <Button onPress={() => { this.setState({ tab: <Map/>}); }}>
@@ -52,9 +51,6 @@ export default class HomeScreen extends Component {
                             <Button onPress={() => { this.setState({ tab: <Search/>}); }}>
                                 <Icon name="search" style={{ color: '#fff' }}/>
                             </Button>
-                            {/* <Button onPress={() => { this.setState({ tab: <TabMap /> }); }}> 
-                                <Icon name="options" style={{ color: '#fff' }} />
-                            </Button>*/}
                         </FooterTab>
                     </Footer>
                 </Container>
