@@ -50,7 +50,7 @@ export default class LoginScreen extends Component {
                     this.setState({ msg: responseJson.message });
                 }
             }).catch((error) => {
-                this.setState({ msg: 'Error na conexão' });
+                this.setState({ msg: error });
             })
         this.setState({ buttonLoading: false });
     }

@@ -72,7 +72,6 @@ export default class SignUpScreen extends Component {
                 })
 
         }
-
         this.setState({ buttonLoading: false });
     }
 
