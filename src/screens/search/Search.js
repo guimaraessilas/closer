@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Header, Item, Input, Icon, Content } from 'native-base';
+import { Container, Header, Item, Input, Icon, Content, Text } from 'native-base';
 import { FlatList } from 'react-native';
 import ListFriendsItem from '../../components/ListFriendsItem';
 

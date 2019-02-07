@@ -39,7 +39,7 @@ export default class HomeScreen extends Component {
 
                     <Footer>
                         <FooterTab>
-                            <Button onPress={() => { this.setState({ tab: <Profile user={this.state.user}/>}); }}>
+                            <Button onPress={() => { this.setState({ tab: <Profile navigate={this.props.navigation} user={this.state.user}/>}); }}>
                                 <Icon name="person" style={{ color: '#fff' }}/>
                             </Button>
                             <Button onPress={() => { this.setState({ tab: <FriendList id={this.state.user.id}/>}); }}>
